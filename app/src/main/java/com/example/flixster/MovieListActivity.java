@@ -47,7 +47,7 @@ public class MovieListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_list);
+        setContentView(R.layout.main_activity);
         // Initializing the new client
         client = new AsyncHttpClient();
         //initializing the list of movies
