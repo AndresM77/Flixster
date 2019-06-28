@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.flixster.models.Config;
+import com.example.flixster.models.Movie;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -32,16 +34,14 @@ public class MovieListActivity extends AppCompatActivity {
 
     // Instance fields
     AsyncHttpClient client;
-    // Base url for loading images
-    String imageBaseUrl;
-    // poster size used when fetching images, part of the url
-    String posterSize;
     // list of current movies
     ArrayList<Movie> movies;
     // Recycler view
     RecyclerView rvMovies;
     // adapter wired to recycler view
     MovieAdapter adapter;
+    //image config
+    Config config;
 
 
     @Override
@@ -113,15 +113,11 @@ public class MovieListActivity extends AppCompatActivity {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 // get the image base url
                 try {
-                    //Parsing the image first
-                    JSONObject images = response.getJSONObject("images");
-                    // get image base url
-                    imageBaseUrl = images.getString("secure_base_url");
-                    // get the poster size
-                    JSONArray posterSizeOptions = images.getJSONArray("poster_sizes");
-                    // use the option at index 3 or w342 as a fallback
-                    posterSize = posterSizeOptions.optString(3, "w342");
-                    Log.i(TAG, String.format("Loaded configuration with imageUrl %s and posterSize %s", imageBaseUrl, posterSize));
+                    config = new Config(response);
+                    Log.i(TAG, String.format("Loaded configuration with imageUrl %s and posterSize %s",
+                            config.getImageBaseUrl(), config.getPosterSize()));
+                    //pass config to adapter
+                    adapter.setConfig(config);
                     // get movies now playing
                     getNowPlaying();
                 } catch (JSONException e) {
